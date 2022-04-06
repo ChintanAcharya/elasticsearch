@@ -17,16 +17,17 @@
 source "`dirname "$0"`"/elasticsearch-env
 
 if [ -z "$ES_TMPDIR" ]; then
-  ES_TMPDIR=`"$JAVA" -cp "$ES_CLASSPATH" org.elasticsearch.tools.launchers.TempDirectory`
+  ES_TMPDIR=`"$JAVA" "$XSHARE" -cp "$ES_CLASSPATH" org.elasticsearch.tools.launchers.TempDirectory`
 fi
 
 ES_JVM_OPTIONS="$ES_PATH_CONF"/jvm.options
-ES_JAVA_OPTS=`export ES_TMPDIR; "$JAVA" -cp "$ES_CLASSPATH" org.elasticsearch.tools.launchers.JvmOptionsParser "$ES_JVM_OPTIONS"`
+ES_JAVA_OPTS=`export ES_TMPDIR; "$JAVA" "$XSHARE" -cp "$ES_CLASSPATH" org.elasticsearch.tools.launchers.JvmOptionsParser "$ES_PATH_CONF"`
 
 # manual parsing to find out, if process should be detached
 if ! echo $* | grep -E '(^-d |-d$| -d |--daemonize$|--daemonize )' > /dev/null; then
   exec \
     "$JAVA" \
+    "$XSHARE" \
     $ES_JAVA_OPTS \
     -Des.path.home="$ES_HOME" \
     -Des.path.conf="$ES_PATH_CONF" \
@@ -39,6 +40,7 @@ if ! echo $* | grep -E '(^-d |-d$| -d |--daemonize$|--daemonize )' > /dev/null; 
 else
   exec \
     "$JAVA" \
+    "$XSHARE" \
     $ES_JAVA_OPTS \
     -Des.path.home="$ES_HOME" \
     -Des.path.conf="$ES_PATH_CONF" \
